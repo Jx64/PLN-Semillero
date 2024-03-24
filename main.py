@@ -1,5 +1,8 @@
 import csv, json, re
 
+import fix_csv
+from property import Property
+
 
 def modificar_caracteristicas(caracteristicas_str):
     print(caracteristicas_str)
@@ -12,6 +15,7 @@ def modificar_caracteristicas(caracteristicas_str):
     for carac in caracteristicas:
         pass
     return caracteristicas
+
 
 def extraer_precio(precio_str):
     # hacer expresion regular
@@ -30,26 +34,24 @@ def obtener_localicaciones_cercanas(locaciones_cercanas):
     return nuevas_locaciones
 
 
-def main():
-    # en open el 'r' significa lectura y lo de encoding utf-8 detecta carasteres latinoamericano
-    with open('hotels.csv', 'r', encoding="utf-8") as csvfile:
-        reader = csv.DictReader(csvfile)  # lee todas las filas
-        first_row = next(reader)  # Lee todas las columnas
+def getValues(file):
+    with open(file, 'r', encoding='utf-8') as csvfile:
+        reader = csv.DictReader(csvfile)
+        first_row = next(reader)
 
         json_output = {}
         for key, value in first_row.items():
-            if key == 'asociate_location':
-                json_output[key] = obtener_localicaciones_cercanas(value)
-            elif key == 'price':
-                json_output[key] = extraer_precio(value)
-            elif key == 'feats':
-                json_output[key] = modificar_caracteristicas(value)
-            else:
-                json_output[key] = value
+            # if key == 'row':
+            #   json_output[key] = value
+            json_output[key] = value
 
-        json_str = json.dumps(json_output, indent=4, ensure_ascii=False)
-        print(json_str)
+        print(json.dumps(json_output, indent=4, ensure_ascii=False))
+
+
+def main(file):
+    fix_csv.characters(file)
+    getValues(file)
 
 
 if __name__ == "__main__":
-    main()
+    main("hotels.csv")
