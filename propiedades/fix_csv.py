@@ -1,6 +1,5 @@
 import csv
 
-
 def read_csv(file):
     data = []
     try:
