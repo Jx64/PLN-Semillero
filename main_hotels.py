@@ -1,7 +1,11 @@
-import csv, json, re
+import csv
+import json
+import re
 import unicodedata
 from propiedades.fix_csv import process_csv
-from propiedades.property import property
+from propiedades.property import Property
+from excepciones.exception import ValorNotFound
+
 
 def normalize_string(s):
     return unicodedata.normalize("NFD", s).casefold()
@@ -73,23 +77,25 @@ def clean_string(s):
 def descomponer_informacion(info: str) -> dict:
     converted_list = eval(info)
     data_dict = {}
-    
     for item in converted_list:
         items = item.split("\n")
-        if items[0].isdigit():
-            clave = items[1]  
-            valor = items[0] 
-        else:
-            clave = items[0] 
-            valor = items[1] 
-        
-        data_dict[clave] = valor
+        try:
+            if items[0].isdigit():
+                clave = items[1]
+                valor = items[0]
+            else:
+                clave = items[0]
+                valor = items[0]
 
-        # Mostrar las llaves y valores de cada inmueble
+            data_dict[clave] = valor
+        except IndexError as e:
+            raise ValorNotFound(f"Se encontró un elemento sin índice suficiente: {item}") from e
+
+    # Mostrar las llaves y valores de cada inmueble
     for key, value in data_dict.items():
         print(f"{key}: {value}")
     print()
-        
+
     return data_dict
 
 
@@ -123,8 +129,8 @@ def get_values(file, json_name):
         json_result = []
 
         while row is not None:
-            propiedades = property()
-            
+            propiedades = Property()
+
             contador = 0
             for key, value in row.items():
                 if contador == 0:
@@ -136,17 +142,17 @@ def get_values(file, json_name):
                 elif contador == 3:
                     location = get_location(value)
                     propiedades.sector = location[0]
-                    propiedades.ciudad = validar_ciudad(location) 
+                    propiedades.ciudad = validar_ciudad(location)
                     propiedades.departamento = validar_departamento(location)
                 elif contador == 4:
                     propiedades.descripcion = limitar_cadena(value)
                 elif contador == 5:
                     propiedades.precio = extraer_precio(value)
                 elif contador == 6:
-                    informacion = descomponer_informacion(value)                    
+                    informacion = descomponer_informacion(value)
                     propiedades.habitaciones = existe('habitaciones', informacion)
                     propiedades.parqueaderos = existe('parqueaderos', informacion)
-                    propiedades.baños = existe('baños', informacion)
+                    propiedades.banos = existe('baños', informacion)
                     propiedades.estrato = existe('estrato', informacion)
                     propiedades.piso = existe('piso n°', informacion)
                     propiedades.administracion = existe('administración', informacion)
@@ -159,34 +165,31 @@ def get_values(file, json_name):
                     propiedades.areaConstruida = value
                 elif contador == 10:
                     propiedades.areaPrivada = value
-#                elif contador == 11:
-                    
-#                elif contador == 12:
-                    
-#               elif contador == 13:
-                    
-                # elif contador == 15:
-                #     caracteristicas = extraer_caracteristicas(value)
-                #     if caracteristicas is not None:
-                #         propiedades.caracteristicasDelExterior = caracteristicas[0]
-                #         propiedades.caracteristicasDelInterior = caracteristicas[1]
-                #         propiedades.caracteristicasDelSector = caracteristicas[2]
-                #     else:
-                #         propiedades.caracteristicasDelExterior = None
-                #         propiedades.caracteristicasDelInterior = None
-                #         propiedades.caracteristicasDelSector = None
-                
+                elif contador == 11:
+                    None
+                elif contador == 12:
+                    None
+                elif contador == 13:
+                    None
+                elif contador == 15:
+                     caracteristicas = extraer_caracteristicas(value)
+                     if caracteristicas is not None:
+                         propiedades.caracteristicasDelExterior = caracteristicas[0]
+                         propiedades.caracteristicasDelInterior = caracteristicas[1]
+                         propiedades.caracteristicasDelSector = caracteristicas[2]
+                     else:
+                         propiedades.caracteristicasDelExterior = None
+                         propiedades.caracteristicasDelInterior = None
+                         propiedades.caracteristicasDelSector = None
+
                 contador += 1
-                
+
             manejador += 1
             try:
                 row = next(reader)
             except StopIteration:
                 break
-            
-            if manejador == 3:
-                break
-            
+
             json_result.append(propiedades.json_out())
 
     with open(f'json_files/{json_name}.json', 'w', encoding="utf-8") as file:
@@ -199,4 +202,4 @@ def main(file, json_name):
 
 
 if __name__ == "__main__":
-    main("csv_files/hotels_metrocuadrado_cartagena_cali_monteria.csv", "hotels")
+    main("csv_files/hotels_stmarta_bucaramanga_valledupar.csv", "hotels")
