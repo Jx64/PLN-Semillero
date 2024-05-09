@@ -1,44 +1,44 @@
-class property:
+class Property:
     def __init__(self):
         self.url = None
         self.nombre = None
         self.sector = None
         self.tipo = None
-        self.precio= 0 #validar
-        self.descripcion = None #validar
+        self.precio = 0  # validar
+        self.descripcion = None  # validar
         self.habitaciones = 0
-        self.baños = 0
+        self.banos = 0
         self.parqueaderos = 0
         self.address = None
-        self.ciudad= None #validar
-        self.departamento= None #validar
-        self.pais= "colombia"  #validar
+        self.ciudad = None  # validar
+        self.departamento = None  # validar
+        self.pais = "colombia"  # validar
         self.areaPrivada = None
         self.antiguedad = None
-        self.precioM2 = 0.0 #validar
+        self.precioM2 = 0.0  # validar
         self.estrato = 0
         self.areaConstruida = None
         self.piso = 0
         self.estado = None
         self.administracion = 0.0
-        self.caracteristicasDelExterior= None
-        self.caracteristicasDelInterior= None
-        self.caracteristicasDelSector= None
+        self.caracteristicasDelExterior = None
+        self.caracteristicasDelInterior = None
+        self.caracteristicasDelSector = None
 
     def get_caracteristicas(self):
         json = []
             
-        if self.caracteristicasDelExterior != None:     
+        if self.caracteristicasDelExterior is not None:
             for item in self.caracteristicasDelExterior:
-                    json_data = {
-                        "tipoDeCaracteristica": {
-                            "nombre": "Caracteristicas del exterior"
-                        },
-                        "nombre": item
-                    }
-                    json.append(json_data)
+                json_data = {
+                    "tipoDeCaracteristica": {
+                        "nombre": "Caracteristicas del exterior"
+                    },
+                    "nombre": item
+                }
+                json.append(json_data)
                     
-        if self.caracteristicasDelInterior != None:     
+        if self.caracteristicasDelInterior is not None:
             for item in self.caracteristicasDelInterior:
                 json_data = {
                     "tipoDeCaracteristica": {
@@ -48,7 +48,7 @@ class property:
                 }
                 json.append(json_data)
                     
-        if self.caracteristicasDelSector != None:     
+        if self.caracteristicasDelSector is not None:
             for item in self.caracteristicasDelSector:
                 json_data = {
                     "tipoDeCaracteristica": {
@@ -58,14 +58,14 @@ class property:
                 }
                 json.append(json_data)       
             
-        if(len(json)!=0):       
+        if len(json) != 0:
             return json
         else:
             return None    
 
     def json_out(self):
         if self.ciudad is not None:
-            jsonUnic = {
+            json_unic = {
                 "sector": {
                     "nombre": self.sector
                 },
@@ -84,11 +84,11 @@ class property:
                 "caracteristicas": self.get_caracteristicas(),
                 "nombre": self.nombre,
                 "descripcion": self.descripcion,
-                "estrato": (self.estrato),
-                "cantidadDeHabitaciones": (self.habitaciones),
-                "cantidadDeBaños": (self.baños),
-                "cantidadDeParqueaderos": (self.parqueaderos),
-                "piso": (self.piso),
+                "estrato": self.estrato,
+                "cantidadDeHabitaciones": self.habitaciones,
+                "cantidadDeBaños": self.banos,
+                "cantidadDeParqueaderos": self.parqueaderos,
+                "piso": self.piso,
                 "antiguedad": self.antiguedad,
                 "precioM2": self.precioM2,
                 "url": self.url,
@@ -100,7 +100,7 @@ class property:
                 "direccion": self.address    
             }    
         else:
-            jsonUnic = {
+            json_unic = {
                 "sector": {
                     "nombre": self.sector
                 },
@@ -111,11 +111,11 @@ class property:
                 "caracteristicas": self.get_caracteristicas(),
                 "nombre": self.nombre,
                 "descripcion": self.descripcion,
-                "estrato": (self.estrato),
-                "cantidadDeHabitaciones": (self.habitaciones),
-                "cantidadDeBaños": (self.baños),
-                "cantidadDeParqueaderos": (self.parqueaderos),
-                "piso": (self.piso),
+                "estrato": self.estrato,
+                "cantidadDeHabitaciones": self.habitaciones,
+                "cantidadDeBaños": self.banos,
+                "cantidadDeParqueaderos": self.parqueaderos,
+                "piso": self.piso,
                 "antiguedad": self.antiguedad,
                 "precioM2": self.precioM2,
                 "url": self.url,
@@ -127,4 +127,4 @@ class property:
                 "direccion": self.address
             }
             
-        return jsonUnic         
+        return json_unic
