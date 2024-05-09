@@ -4,7 +4,7 @@ import re
 import unicodedata
 from propiedades.fix_csv import process_csv
 from propiedades.property import Property
-from excepciones.exception import ValorNotFound
+from excepciones.exception import ValueNotFound
 
 
 def normalize_string(s):
@@ -61,13 +61,22 @@ def extraer_caracteristicas(caracteristicas_str: str):
 
 
 def extraer_precio(precio_str):
-    precio = re.findall(r'\d+', precio_str)
-    return float(''.join(precio)) if precio else None
+    try:
+        precio = re.findall(r'\d+', precio_str)
+        return float(''.join(precio))
+    except IndexError:
+        ValueNotFound("There's not house price in the row")
+        return None
 
 
 def get_location(fila: str):
-    location = [part.strip().lower() for part in fila.split('-')]
-    return location
+    try:
+        location = [part.strip().lower() for part in fila.split('-')]
+        return location
+    except IndexError:
+        ValueNotFound("There's not an location in the row")
+        return None
+    
 
 
 def clean_string(s):
@@ -89,7 +98,7 @@ def descomponer_informacion(info: str) -> dict:
 
             data_dict[clave] = valor
         except IndexError as e:
-            raise ValorNotFound(f"Se encontró un elemento sin índice suficiente: {item}") from e
+            raise ValueNotFound(f"Se encontró un elemento sin índice suficiente: {item}") from e
 
     # Mostrar las llaves y valores de cada inmueble
     for key, value in data_dict.items():
@@ -109,7 +118,7 @@ def limitar_cadena(cadena, max_longitud=600):
 
 def validar_ciudad(lst):
     try:
-        return lst[1]
+        lst[1]
     except IndexError:
         return None
 
@@ -166,11 +175,11 @@ def get_values(file, json_name):
                 elif contador == 10:
                     propiedades.areaPrivada = value
                 elif contador == 11:
-                    None
+                    var = None
                 elif contador == 12:
-                    None
+                    var = None
                 elif contador == 13:
-                    None
+                    var = None
                 elif contador == 15:
                      caracteristicas = extraer_caracteristicas(value)
                      if caracteristicas is not None:
